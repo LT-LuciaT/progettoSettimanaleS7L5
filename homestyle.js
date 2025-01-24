@@ -33,11 +33,17 @@ function displayProducts(products) {
     const productCard = document.createElement("div");
     productCard.classList.add("col-12", "col-md-4", "col-lg-2");
 
+    const productLink = document.createElement("a");
+    productLink.href = `dettaglio.html?id=${product._id}`;
+    productLink.classList.add("text-decoration-none");
+
     productCard.innerHTML = `
     <div class="card">
       <img src="${product.imageUrl || "https://via.placeholder.com/250"}" alt="${product.name}">
       <div class="card-body">
-        <h5 class="card-title">${product.name}</h5>
+      <h5 class="card-title">
+            <a href="dettaglio.html?id=${product._id}" class="text-decoration-none text-dark">${product.name}</a>
+          </h5>
         <p class="card-text">${product.description}</p>
         <div class="price">€ ${product.price.toFixed(2)}</div>
       </div>

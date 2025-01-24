@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dettaglio Prodotto</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <style>
+      .card {
+        width: 200px;
+        height: auto;
+        margin-inline: auto;
+      }
+      .product-card {
+        max-width: 400px;
+      }
+      .product-card img {
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="bg-dark text-white text-center py-4">
+      <h1>Dettagli Prodotto</h1>
+    </header>
+    <main class="container mt-5" id="product-detail"></main>
+
+    <script>
+      const STRIVEschool = "https://striveschool-api.herokuapp.com/api/product/";
+      const APIkey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzkzNWIzMmI3NDcwMTAwMTU4YjJhZmEiLCJpYXQiOjE3Mzc3MTAzODYsImV4cCI6MTczODkxOTk4Nn0.RPtjlDt--oxvJSpmA0Fo6zhhWpskj5mdw7LWtohunC4";
+
+      function getProductDetail() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get("id");
+
+        fetch(`${STRIVEschool}${productId}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${APIkey}`,
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Errore nel recupero dei prodotti");
+            }
+            return response.json();
+          })
+          .then((product) => {
+            displayProductDetail(product);
+          })
+          .catch((error) => {
+            console.error(error);
+            alert("Errore nel recupero dei prodotti");
+          });
+      }
+
+      function displayProductDetail(product) {
+        const productDetail = document.getElementById("product-detail");
+        productDetail.innerHTML = `
+          <div class="card">
+            <img src="${product.imageUrl || "https://via.placeholder.com/250"}" alt="${
+          product.name
+        }" class="card-img-top">
+            <div class="card-body">
+              <h5 class="card-title">${product.name}</h5>
+              <p class="card-text">${product.description}</p>
+              <p><strong>Brand:</strong> ${product.brand}</p>
+              <p><strong>Prezzo:</strong> € ${product.price.toFixed(2)}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      document.addEventListener("DOMContentLoaded", getProductDetail);
+    </script>
+  </body>
+</html>
