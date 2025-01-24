@@ -31,9 +31,15 @@ function displayProducts(products) {
   const productList = document.getElementById("productList");
   productList.innerHTML = "";
 
+  const row = document.createElement("div");
+  row.classList.add("row", "g-3");
+
   products.forEach((product) => {
+    const col = document.createElement("div");
+    col.classList.add("col-12", "col-sm-6", "col-md-4", "col-lg-3");
+
     const productCard = document.createElement("div");
-    productCard.classList.add("product-card");
+    productCard.classList.add("product-card", "card", "h-100");
 
     productCard.innerHTML = `
         <img src="${product.imageUrl || "https://via.placeholder.com/250"}" alt="${product.name}">
@@ -48,8 +54,10 @@ function displayProducts(products) {
         </div>
       `;
 
-    productList.appendChild(productCard);
+    col.appendChild(productCard);
+    row.appendChild(col);
   });
+  productList.appendChild(row);
 }
 let productToEdit = null;
 
