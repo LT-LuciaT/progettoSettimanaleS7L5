@@ -43,13 +43,78 @@ function displayProducts(products) {
           <div class="price">€ ${product.price.toFixed(2)}</div>
         </div>
         <div class="actions">
-          <button onclick="editProduct('${product._id}')">Modifica</button>
+          <button onclick="openEditModal('${product._id}')">Modifica</button>
           <button onclick="deleteProduct('${product._id}')">Elimina</button>
         </div>
       `;
 
     productList.appendChild(productCard);
   });
+}
+let productToEdit = null;
+
+function openEditModal(productId) {
+  fetch(`${STRIVEschool}${productId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${APIkey}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((product) => {
+      productToEdit = product;
+      document.getElementById("editName").value = product.name;
+      document.getElementById("editDescription").value = product.description;
+      document.getElementById("editBrand").value = product.brand;
+      document.getElementById("editPrice").value = product.price;
+      document.getElementById("editImageUrl").value = product.imageUrl || "";
+
+      var myModal = new bootstrap.Modal(document.getElementById("editModal"));
+      myModal.show();
+
+      document.getElementById("editProductForm").onsubmit = function (event) {
+        event.preventDefault();
+        const updatedProduct = {
+          name: document.getElementById("editName").value,
+          description: document.getElementById("editDescription").value,
+          brand: document.getElementById("editBrand").value,
+          price: parseFloat(document.getElementById("editPrice").value),
+          imageUrl:
+            document.getElementById("editImageUrl").value.trim() === ""
+              ? null
+              : document.getElementById("editImageUrl").value,
+        };
+        updateProduct(productId, updatedProduct);
+      };
+    })
+
+    .catch((error) => {
+      console.error("Errore nel recupero del prodotto:", error);
+      alert("Errore nel recupero del prodotto");
+    });
+}
+
+function updateProduct(productId, updatedProduct) {
+  fetch(`${STRIVEschool}${productId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${APIkey}`,
+    },
+    body: JSON.stringify(updatedProduct),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Prodotto modificato", data);
+      alert("Prodotto modificato!");
+      loadProducts();
+      var myModal = bootstrap.Modal.getInstance(document.getElementById("editModal"));
+      myModal.hide();
+    })
+    .catch((error) => {
+      console.error("Errore nella modifica del prodotto:", error);
+      alert("Errore nella modifica del prodotto: " + error.message);
+    });
 }
 
 // aggiungere prodotto
@@ -113,31 +178,6 @@ function deleteProduct(productId) {
       .catch((error) => {
         console.error("Errore nell'eliminare il prodotto:", error);
         alert("Errore nell'eliminare il prodotto: " + error.message);
-      });
-  }
-}
-function editProduct(productId) {
-  const productName = prompt("Nuovo nome del prodotto:");
-  if (productName) {
-    fetch(`${STRIVEschool}${productId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${APIkey}`,
-      },
-      body: JSON.stringify({
-        name: productName,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Prodotto modificato con successo:", data);
-        alert("Prodotto modificato con successo!");
-        loadProducts();
-      })
-      .catch((error) => {
-        console.error("Errore nel modificare il prodotto:", error);
-        alert("Errore nel modificare il prodotto: " + error.message);
       });
   }
 }
