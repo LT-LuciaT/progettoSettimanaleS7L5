@@ -31,7 +31,7 @@ function displayProducts(products) {
 
   products.forEach((product) => {
     const productCard = document.createElement("div");
-    productCard.classList.add("col-12", "col-md-4", "col-lg-2");
+    productCard.classList.add("col-12", "col-sm-6", "col-md-4", "col-lg-3");
 
     const productLink = document.createElement("a");
     productLink.href = `dettaglio.html?id=${product._id}`;
@@ -46,6 +46,8 @@ function displayProducts(products) {
           </h5>
         <p class="card-text">${product.description}</p>
         <div class="price">€ ${product.price.toFixed(2)}</div>
+        <div> <button class="btn btn-danger mt-3" onclick="hideProduct(event)">Nascondi</button></div>
+        
       </div>
     </div>
   `;
@@ -53,6 +55,13 @@ function displayProducts(products) {
     productList.appendChild(productCard);
   });
 }
+function hideProduct(event) {
+  const card = event.target.closest(".col-12");
+  if (card) {
+    card.style.display = "none";
+  }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   fetchProducts();
 });
