@@ -49,8 +49,8 @@ function displayProducts(products) {
           <div class="price">€ ${product.price.toFixed(2)}</div>
         </div>
         <div class="actions">
-          <button onclick="openEditModal('${product._id}')">Modifica</button>
-          <button onclick="deleteProduct('${product._id}')">Elimina</button>
+          <button onclick="openEditModal('${product._id}' type="button" class="btn btn-secondary")">Modifica</button>
+          <button onclick="deleteProduct('${product._id}' type="button" class="btn btn-danger")">Elimina</button>
         </div>
       `;
 

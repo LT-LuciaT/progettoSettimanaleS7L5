@@ -11,9 +11,16 @@
         font-family: Arial, sans-serif;
         margin: 20px;
       }
+      h1 {
+        text-align: center;
+        padding: 1em;
+      }
       label {
         margin-top: 10px;
         display: block;
+      }
+      input {
+        height: 15px;
       }
       input,
       textarea {
@@ -24,9 +31,7 @@
       button {
         padding: 10px 15px;
       }
-      button:hover {
-        background-color: #2059d3;
-      }
+
       .product-card {
         height: 100%;
         display: flex;
@@ -44,6 +49,16 @@
         padding: 1em;
         margin-bottom: 20px;
         margin-left: 85%;
+      }
+      h2 {
+        padding: 4em 0em 2em 0em;
+      }
+      #productForm {
+        width: 50%;
+        margin-inline: auto;
+      }
+      input {
+        height: 15px;
       }
     </style>
   </head>
@@ -72,10 +87,10 @@
       <label for="imageUrl">URL Immagine </label>
       <input type="text" id="imageUrl" name="imageUrl" />
 
-      <button type="submit">Aggiungi Prodotto</button>
+      <button type="button" class="btn btn-primary" type="submit">Aggiungi Prodotto</button>
     </form>
 
-    <h2>Prodotti Esistenti</h2>
+    <h2>Prodotti Esistenti :</h2>
     <div id="productList"></div>
 
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
