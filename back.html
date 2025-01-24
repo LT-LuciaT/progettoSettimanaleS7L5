@@ -33,8 +33,9 @@
         flex-direction: column;
       }
       .product-card img {
-        width: 100%;
-        height: auto;
+        width: fit-content;
+        height: 200px;
+        align-self: center;
       }
       header {
         display: flex;
@@ -56,19 +57,19 @@
     </header>
     <h1>Aggiungi Nuovo Prodotto</h1>
     <form id="productForm">
-      <label for="name">Nome Prodotto (obbligatorio)</label>
+      <label for="name">Nome Prodotto </label>
       <input type="text" id="name" name="name" required />
 
-      <label for="description">Descrizione (obbligatorio)</label>
+      <label for="description">Descrizione </label>
       <textarea id="description" name="description" required></textarea>
 
-      <label for="brand">Brand (obbligatorio)</label>
+      <label for="brand">Brand </label>
       <input type="text" id="brand" name="brand" required />
 
-      <label for="price">Prezzo (obbligatorio)</label>
+      <label for="price">Prezzo </label>
       <input type="number" id="price" name="price" required />
 
-      <label for="imageUrl">URL Immagine (obbligatorio)</label>
+      <label for="imageUrl">URL Immagine </label>
       <input type="text" id="imageUrl" name="imageUrl" />
 
       <button type="submit">Aggiungi Prodotto</button>
