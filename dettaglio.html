@@ -12,16 +12,25 @@
     />
     <style>
       .card {
-        width: 200px;
+        width: 400px;
         height: auto;
         margin-inline: auto;
       }
       .product-card {
-        max-width: 400px;
+        max-width: 100%;
       }
       .product-card img {
         max-width: 100%;
         height: auto;
+      }
+      .dettagli {
+        display: none;
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px solid #ddd;
+      }
+      .dettagli.show {
+        display: block;
       }
     </style>
   </head>
@@ -30,11 +39,41 @@
       <h1>Dettagli Prodotto</h1>
     </header>
     <main class="container mt-5" id="product-detail"></main>
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel">Modifica Dettagli Prodotto</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="category" class="form-label">Categoria</label>
+              <input type="text" class="form-control" id="category" />
+            </div>
+            <div class="mb-3">
+              <label for="releaseDate" class="form-label">Data di rilascio</label>
+              <input type="text" class="form-control" id="releaseDate" />
+            </div>
+            <div class="mb-3">
+              <label for="specifiche" class="form-label">Specifiche</label>
+              <input type="text" class="form-control" id="specifiche" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+            <button type="button" class="btn btn-primary" onclick="saveChanges()">Salva modifiche</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script>
       const STRIVEschool = "https://striveschool-api.herokuapp.com/api/product/";
       const APIkey =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzkzNWIzMmI3NDcwMTAwMTU4YjJhZmEiLCJpYXQiOjE3Mzc3MTAzODYsImV4cCI6MTczODkxOTk4Nn0.RPtjlDt--oxvJSpmA0Fo6zhhWpskj5mdw7LWtohunC4";
+
+      let currentProduct = {};
 
       function getProductDetail() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -53,6 +92,7 @@
             return response.json();
           })
           .then((product) => {
+            currentProduct = product;
             displayProductDetail(product);
           })
           .catch((error) => {
@@ -73,12 +113,75 @@
               <p class="card-text">${product.description}</p>
               <p><strong>Brand:</strong> ${product.brand}</p>
               <p><strong>Prezzo:</strong> € ${product.price.toFixed(2)}</p>
+              <div class="dettagli">
+                <h6>Dettagli aggiuntivi:</h6>
+                <p><strong>Categoria:</strong> ${product.category}</p>
+                <p><strong>Data di rilascio:</strong> ${product.releaseDate || "Non disponibile"}</p>
+                <p><strong>Specifiche:</strong> ${product.specifiche || "Non specificato"}</p>
+              </div>
+              <button class="btn btn-primary mt-3" onclick="toggleDettagli()">Mostra Dettagli</button>
+               <button class="btn btn-warning mt-3" onclick="openEditModal()">Modifica</button>
             </div>
           </div>
         `;
       }
+      function toggleDettagli() {
+        const dettagliSection = document.querySelector(".dettagli");
+        dettagliSection.classList.toggle("show");
+      }
+      function openEditModal() {
+        document.getElementById("category").value = currentProduct.category || "";
+        document.getElementById("releaseDate").value = currentProduct.releaseDate || "";
+        document.getElementById("specifiche").value = currentProduct.specifiche || "";
+
+        const editModal = new bootstrap.Modal(document.getElementById("editModal"));
+        editModal.show();
+      }
+      function saveChanges() {
+        currentProduct.category = document.getElementById("category").value;
+        currentProduct.releaseDate = document.getElementById("releaseDate").value;
+        currentProduct.specifiche = document.getElementById("specifiche").value;
+        displayProductDetail(currentProduct);
+
+        fetch(`${STRIVEschool}${currentProduct._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${APIkey}`,
+          },
+          body: JSON.stringify({
+            category: currentProduct.category,
+            releaseDate: currentProduct.releaseDate,
+            specifiche: currentProduct.specifiche,
+          }),
+        })
+          .then((response) => {
+            console.log(response);
+            if (!response.ok) {
+              throw new Error("Errore nel salvataggio");
+            }
+            return response.json();
+          })
+          .then((updatedProduct) => {
+            console.log(updatedProduct);
+            currentProduct = updatedProduct;
+            displayProductDetail(updatedProduct);
+
+            const editModal = bootstrap.Modal.getInstance(document.getElementById("editModal"));
+            editModal.hide();
+          })
+          .catch((error) => {
+            console.error(error);
+            alert("Errore nel salvataggio");
+          });
+      }
 
       document.addEventListener("DOMContentLoaded", getProductDetail);
     </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>
